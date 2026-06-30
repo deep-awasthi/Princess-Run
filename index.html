@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Princess Run - A magical endless runner game featuring a cute princess in a fairy kingdom. Jump, dodge, and collect crowns!" />
+  <meta name="theme-color" content="#ff69b4" />
+  <title>Princess Run 👑 - Magical Endless Runner</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loading-screen" class="screen active">
+    <div class="loading-content">
+      <div class="crown-icon">👑</div>
+      <h1 class="loading-title">Princess Run</h1>
+      <div class="loading-bar-container">
+        <div class="loading-bar" id="loading-bar"></div>
+      </div>
+      <p class="loading-text" id="loading-text">Loading magical kingdom...</p>
+    </div>
+  </div>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="start-screen" class="screen">
+    <canvas id="start-bg-canvas"></canvas>
+    <div class="start-content">
+      <div class="title-container">
+        <div class="sparkle-container" id="title-sparkles"></div>
+        <h1 class="game-title">
+          <span class="title-princess">Princess</span>
+          <span class="title-run">Run</span>
+          <span class="title-crown">👑</span>
+        </h1>
+        <p class="start-subtitle">A Magical Endless Adventure</p>
+      </div>
+      <div class="start-princess-container">
+        <canvas id="start-princess-canvas" width="120" height="140"></canvas>
+      </div>
+      <div class="start-buttons">
+        <button id="btn-play" class="btn btn-primary">
+          <span class="btn-icon">▶</span> Play
+        </button>
+        <button id="btn-leaderboard" class="btn btn-secondary">
+          <span class="btn-icon">🏆</span> Leaderboard
+        </button>
+        <button id="btn-stats" class="btn btn-secondary">
+          <span class="btn-icon">📊</span> Statistics
+        </button>
+        <button id="btn-settings" class="btn btn-secondary">
+          <span class="btn-icon">⚙️</span> Settings
+        </button>
+      </div>
+      <p class="controls-hint">Press <kbd>Space</kbd> to Start</p>
+    </div>
+  </div>
+
+  <!-- ===== GAME SCREEN ===== -->
+  <div id="game-screen" class="screen">
+    <!-- HUD -->
+    <div id="hud">
+      <div id="hud-left">
+        <div class="hud-item" id="score-display">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="score-value">0</span>
+        </div>
+        <div class="hud-item" id="combo-display">
+          <span class="hud-label">Combo</span>
+          <span class="hud-value" id="combo-value">1.0x</span>
+        </div>
+        <div class="hud-item" id="best-display">
+          <span class="hud-label">Best</span>
+          <span class="hud-value" id="best-value">0</span>
+        </div>
+      </div>
+      <div id="hud-center">
+        <div id="powerup-display" class="hidden">
+          <span id="powerup-icon">⚡</span>
+          <div class="powerup-bar-bg">
+            <div class="powerup-bar" id="powerup-bar"></div>
+          </div>
+        </div>
+      </div>
+      <div id="hud-right">
+        <div id="lives-display">
+          <span id="life1">❤️</span>
+          <span id="life2">❤️</span>
+          <span id="life3">❤️</span>
+        </div>
+        <div id="coins-display">
+          <span>💎</span>
+          <span id="coin-count">0</span>
+        </div>
+        <button id="btn-pause" class="hud-btn" title="Pause (P)">⏸</button>
+        <button id="btn-mute" class="hud-btn" title="Mute (M)">🔊</button>
+      </div>
+    </div>
+    <!-- Main Canvas -->
+    <canvas id="game-canvas"></canvas>
+    <!-- Funny message overlay -->
+    <div id="funny-message" class="hidden"></div>
+    <!-- Powerup notification -->
+    <div id="powerup-notification" class="hidden"></div>
+  </div>
+
+  <!-- ===== PAUSE SCREEN ===== -->
+  <div id="pause-screen" class="screen overlay-screen hidden">
+    <div class="modal pause-modal">
+      <div class="modal-icon">⏸️</div>
+      <h2 class="modal-title">Game Paused</h2>
+      <div class="pause-stats">
+        <span>Score</span>
+        <strong id="pause-score">0</strong>
+      </div>
+      <div class="modal-buttons">
+        <button id="btn-resume" class="btn btn-primary">▶&nbsp; Resume Game</button>
+        <button id="btn-restart-pause" class="btn btn-secondary">🔄&nbsp; Restart</button>
+        <button id="btn-menu-pause" class="btn btn-secondary">🏠&nbsp; Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GAME OVER SCREEN ===== -->
+  <div id="gameover-screen" class="screen overlay-screen hidden">
+    <div class="modal gameover-modal">
+      <div id="gameover-princess-canvas-container">
+        <canvas id="gameover-princess-canvas" width="100" height="120"></canvas>
+      </div>
+      <h2 class="modal-title">💔 Game Over</h2>
+      <div id="hall-of-fame-banner" class="hidden">
+        <div class="hof-content">🏆 NEW HIGH SCORE! 🏆</div>
+        <div id="confetti-container"></div>
+      </div>
+      <div class="gameover-stats">
+        <div class="stat-row">
+          <span class="stat-label">Score</span>
+          <span class="stat-val" id="go-score">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Best Score</span>
+          <span class="stat-val" id="go-best">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Distance</span>
+          <span class="stat-val" id="go-distance">0m</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Coins</span>
+          <span class="stat-val" id="go-coins">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Rank</span>
+          <span class="stat-val" id="go-rank">#-</span>
+        </div>
+      </div>
+      <div class="modal-buttons">
+        <button id="btn-play-again" class="btn btn-primary">🔄&nbsp; Play Again</button>
+        <button id="btn-gameover-leaderboard" class="btn btn-secondary">🏆&nbsp; Leaderboard</button>
+        <button id="btn-gameover-menu" class="btn btn-secondary">🏠&nbsp; Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEADERBOARD SCREEN ===== -->
+  <div id="leaderboard-screen" class="screen hidden">
+    <div class="page-container">
+      <h2 class="page-title">🏆 Leaderboard</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="top5">Top 5 Scores</button>
+        <button class="tab-btn" data-tab="last5">Last 5 Games</button>
+      </div>
+      <div id="tab-top5" class="tab-content active">
+        <table class="lb-table">
+          <thead>
+            <tr><th>#</th><th>Score</th><th>Distance</th><th>Coins</th><th>Date</th></tr>
+          </thead>
+          <tbody id="top5-body"></tbody>
+        </table>
+      </div>
+      <div id="tab-last5" class="tab-content">
+        <table class="lb-table">
+          <thead>
+            <tr><th>#</th><th>Score</th><th>Distance</th><th>Coins</th><th>Time</th><th>Date</th></tr>
+          </thead>
+          <tbody id="last5-body"></tbody>
+        </table>
+      </div>
+      <div class="page-buttons">
+        <button id="btn-lb-back" class="btn btn-secondary">← Back</button>
+        <button id="btn-reset-lb" class="btn btn-danger">🗑 Reset Leaderboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STATISTICS SCREEN ===== -->
+  <div id="stats-screen" class="screen hidden">
+    <div class="page-container">
+      <h2 class="page-title">📊 Statistics</h2>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="page-buttons">
+        <button id="btn-stats-back" class="btn btn-secondary">← Back</button>
+        <button id="btn-reset-stats" class="btn btn-danger">🗑 Reset Statistics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS SCREEN ===== -->
+  <div id="settings-screen" class="screen hidden">
+    <div class="page-container">
+      <h2 class="page-title">⚙️ Settings</h2>
+      <div class="settings-list">
+        <div class="setting-row">
+          <label>🎵 Music Volume</label>
+          <input type="range" id="setting-music" min="0" max="100" value="50" />
+          <span id="music-val">50</span>
+        </div>
+        <div class="setting-row">
+          <label>🔊 Sound Volume</label>
+          <input type="range" id="setting-sfx" min="0" max="100" value="80" />
+          <span id="sfx-val">80</span>
+        </div>
+        <div class="setting-row">
+          <label>🎨 Theme</label>
+          <select id="setting-theme">
+            <option value="light">Light</option>
+            <option value="night">Night</option>
+            <option value="candy">Candy Land</option>
+            <option value="rainbow">Rainbow</option>
+            <option value="retro">Retro Pixel</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label>⚔️ Difficulty</label>
+          <select id="setting-difficulty">
+            <option value="easy">Easy</option>
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label>🖥 Graphics Quality</label>
+          <select id="setting-quality">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <label>♿ Reduced Motion</label>
+          <label class="toggle">
+            <input type="checkbox" id="setting-reduced-motion" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label>🎯 High Contrast</label>
+          <label class="toggle">
+            <input type="checkbox" id="setting-high-contrast" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label>🖥 Fullscreen</label>
+          <button id="btn-fullscreen" class="btn btn-small">Toggle Fullscreen</button>
+        </div>
+      </div>
+      <div class="page-buttons">
+        <button id="btn-settings-back" class="btn btn-secondary">← Back</button>
+        <button id="btn-settings-reset-lb" class="btn btn-danger">🗑 Reset Leaderboard</button>
+        <button id="btn-settings-reset-stats" class="btn btn-danger">🗑 Reset Statistics</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONFIRMATION DIALOG ===== -->
+  <div id="confirm-dialog" class="screen overlay-screen hidden">
+    <div class="modal confirm-modal">
+      <h3 id="confirm-title">Are you sure?</h3>
+      <p id="confirm-message">This action cannot be undone.</p>
+      <div class="modal-buttons">
+        <button id="btn-confirm-yes" class="btn btn-danger">Yes, Reset</button>
+        <button id="btn-confirm-no" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/StorageManager.js"></script>
+  <script src="js/SoundManager.js"></script>
+  <script src="js/ParticleSystem.js"></script>
+  <script src="js/InputManager.js"></script>
+  <script src="js/BackgroundManager.js"></script>
+  <script src="js/Player.js"></script>
+  <script src="js/Obstacle.js"></script>
+  <script src="js/Collectible.js"></script>
+  <script src="js/PowerUp.js"></script>
+  <script src="js/CollisionManager.js"></script>
+  <script src="js/UIManager.js"></script>
+  <script src="js/LeaderboardManager.js"></script>
+  <script src="js/StatisticsManager.js"></script>
+  <script src="js/SettingsManager.js"></script>
+  <script src="js/Game.js"></script>
+</body>
+</html>
